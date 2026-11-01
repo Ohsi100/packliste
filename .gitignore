@@ -1,8 +1,9 @@
 # Lokale Einstellungen von Claude Code (enthalten Pfade vom PC) – nicht ins öffentliche Repo
 .claude/
 
-# Sicherungsdateien der Packliste nie hochladen
+# Geteilte Gepäcklisten und Sicherungsdateien nie hochladen
 packliste-sicherung-*.json
+Gepaecklisten-*.txt
 
 # Windows
 Thumbs.db

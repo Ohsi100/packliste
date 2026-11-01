@@ -28,7 +28,7 @@ was sie für den Urlaub eingepackt haben und **in welches Gepäckstück** (Koffe
 - **Gepäck**: gehört einer Person oder beiden. Standard je Reise: Koffer C, Rucksack C, Koffer L, Rucksack L, Kosmetiktasche.
   Taschen können in einem Koffer stecken. Anlegen, umbenennen, Farbe, löschen.
 - **Mehr**: "Neu packen" (Etappe Hinweg ↔ Rückweg), Namen der Personen ändern (gilt für alle Reisen),
-  "Liste leeren" (nur Sachen der aktuellen Reise; Kategorien und Gepäck bleiben), Sicherung aller Reisen speichern/laden.
+  "Liste leeren" (nur Sachen der aktuellen Reise; Kategorien und Gepäck bleiben), "Gepäcklisten teilen".
 
 ## Daten
 - localStorage-Schlüssel `packliste-v1`, `format: 2` = `{ personen, reisen: [{ id, name, etappe, gepaeck, sachen }], aktiv }`.
@@ -40,3 +40,11 @@ was sie für den Urlaub eingepackt haben und **in welches Gepäckstück** (Koffe
 - Auf `localhost` ist der Service Worker absichtlich aus (Änderungen sofort sichtbar). Offline-Test über `http://127.0.0.1:8081`.
 - Testserver: `Testserver-starten.cmd` (Port 8081).
 - Icons: Lucide, nur die benutzten in `js/icons.js`.
+
+## Gepäcklisten teilen (zwischen den Handys)
+- "Gepäcklisten teilen" schickt alle Reisen als `Gepaecklisten-JJJJ-MM-TT-HHMM.txt` über das Android-Teilen-Menü (z. B. WhatsApp).
+  `.txt`, weil Chrome `.json` nicht teilen darf. Inhalt ist JSON (`app: "packliste"`). Ohne Teilen-Menü (PC): Download.
+- Empfangen: Die installierte App ist Teilen-Ziel (`share_target` im Manifest). WhatsApp → lange auf Datei drücken → Teilen → Packliste.
+  `sw.js` nimmt den POST auf `teilen-empfangen` an, legt die Datei im Cache `geteilt-datei` ab und öffnet `./?geteilt=1`;
+  die App fragt beim Start nach und ersetzt dann alle Reisen. Ersatzweg: Mehr → "Datei laden".
+- Es wird nichts zusammengeführt: Wer zuletzt übernimmt, hat den Stand des Absenders.

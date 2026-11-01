@@ -27,6 +27,18 @@ self.addEventListener('message', e => {
   if (e.data === 'skipWaiting') self.skipWaiting();
 });
 
+// Android "Teilen → Packliste": Die geteilte Datei kommt hier an. Wir legen sie im Cache "geteilt-datei" ab
+// (beginnt bewusst nicht mit "pl-", damit ein Update sie nicht löscht) und öffnen die App, die sie dann übernimmt.
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'POST' || !new URL(e.request.url).pathname.endsWith('/teilen-empfangen')) return;
+  e.respondWith((async () => {
+    const formular = await e.request.formData();
+    const datei = formular.get('datei');
+    if (datei) await (await caches.open('geteilt-datei')).put('geteilt', new Response(datei));
+    return Response.redirect(new URL('./?geteilt=1', self.registration.scope).href, 303);
+  })());
+});
+
 // Zuerst aus dem Speicher, sonst aus dem Netz (und dann merken).
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || !e.request.url.startsWith(self.location.origin)) return;

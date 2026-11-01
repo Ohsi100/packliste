@@ -40,6 +40,7 @@ function start() {
   zeichnen();
   if (!store.istSpeicherOk()) toast('Achtung: Der Browser speichert gerade nichts. Änderungen gehen beim Schließen verloren.', { dauer: 6000, farbe: 'danger' });
   serviceWorker();
+  geteiltPruefen();
 }
 
 function zeichnen() {
@@ -560,13 +561,12 @@ function seiteMehr() {
     </div>
 
     <div class="karte">
-      <h3>${icon('download', 22)}Sicherung & zweites Handy</h3>
-      <p>Alle ${reisen.length} Reisen sind nur auf diesem Handy gespeichert. Mit einer Sicherungsdatei könnt ihr sie aufbewahren oder auf das andere Handy übertragen.</p>
-      <div class="knopf-reihe">
-        <ion-button fill="outline" data-export>${icon('download', 20)}Sichern</ion-button>
-        <ion-button fill="outline" data-import>${icon('upload', 20)}Laden</ion-button>
-      </div>
-      <input type="file" id="datei" accept="application/json,.json" hidden>
+      <h3>${icon('share-2', 22)}Gepäcklisten teilen</h3>
+      <p>Schickt den aktuellen Stand ${reisen.length === 1 ? 'eurer Reise' : `aller ${reisen.length} Reisen`} an das andere Handy, z. B. per WhatsApp.</p>
+      <ion-button expand="block" data-teilen>${icon('share-2', 20)}Gepäcklisten teilen</ion-button>
+      <p class="hinweis klein-text teilen-hilfe">Empfangen: in WhatsApp lange auf die Datei drücken → Teilen → <b>Packliste</b>. Klappt das nicht, Datei speichern und hier laden.</p>
+      <ion-button expand="block" fill="outline" data-import>${icon('upload', 20)}Datei laden</ion-button>
+      <input type="file" id="datei" accept=".txt,.json,text/plain,application/json" hidden>
     </div>
     <p class="hinweis mittig klein-text">Packliste · Version ${esc(self.APP_VERSION)} · funktioniert auch offline</p>`;
 
@@ -575,18 +575,45 @@ function seiteMehr() {
     const datei = e.target.files[0];
     if (!datei) return;
     try {
-      const text = await datei.text();
-      if (!await bestaetigen('Sicherung laden?', 'Alle Reisen auf diesem Handy werden durch die Sicherung ersetzt.', 'Laden')) return;
-      store.importieren(text);
-      toast('Sicherung geladen', { farbe: 'success' });
-      location.hash = '#/';
-      zeichnen();
-    } catch (fehler) {
-      toast(fehler.message.startsWith('Das ist') ? fehler.message : 'Die Datei konnte nicht gelesen werden.', { farbe: 'danger' });
+      await uebernehmen(await datei.text());
+    } catch {
+      toast('Die Datei konnte nicht gelesen werden.', { farbe: 'danger' });
     } finally {
       e.target.value = '';
     }
   });
+}
+
+// Geteilte Gepäcklisten übernehmen (aus "Datei laden" oder vom Android-Teilen-Menü)
+async function uebernehmen(text) {
+  let obj;
+  try { obj = JSON.parse(text); } catch { obj = null; }
+  if (obj?.app !== 'packliste') {
+    toast('Das ist keine Datei der Packliste.', { farbe: 'danger' });
+    return;
+  }
+  const reisen = obj.daten?.reisen?.length ?? 1;
+  const stand = new Date(obj.exportiert).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  if (!await bestaetigen('Gepäcklisten übernehmen?', `Stand vom ${stand} Uhr, ${reisen} ${reisen === 1 ? 'Reise' : 'Reisen'}. Die Listen auf diesem Handy werden dadurch ersetzt.`, 'Übernehmen')) return;
+  try {
+    store.importieren(text);
+  } catch (fehler) {
+    toast(fehler.message, { farbe: 'danger' });
+    return;
+  }
+  toast('Gepäcklisten übernommen', { farbe: 'success' });
+  location.hash = '#/';
+  zeichnen();
+}
+
+// Hat Android der App über "Teilen → Packliste" eine Datei gegeben? Der Service Worker legt sie im Cache ab.
+async function geteiltPruefen() {
+  if (!('caches' in window) || !await caches.has('geteilt-datei')) return;
+  const cache = await caches.open('geteilt-datei');
+  const antwort = await cache.match('geteilt');
+  await caches.delete('geteilt-datei');
+  history.replaceState(null, '', location.pathname + '#/');
+  if (antwort) await uebernehmen(await antwort.text());
 }
 
 async function neuPacken() {
@@ -615,17 +642,30 @@ async function personUmbenennen(id) {
   seiteMehr();
 }
 
-function sicherungSpeichern() {
-  const blob = new Blob([store.exportieren()], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
+// Über das Teilen-Menü von Android (WhatsApp usw.). Als .txt, weil Chrome .json-Dateien nicht teilen darf.
+// Ohne Teilen-Menü (z. B. am PC) wird die Datei heruntergeladen.
+async function teilen() {
+  const jetzt = new Date();
+  const zwei = n => String(n).padStart(2, '0');
+  const name = `Gepaecklisten-${jetzt.getFullYear()}-${zwei(jetzt.getMonth() + 1)}-${zwei(jetzt.getDate())}-${zwei(jetzt.getHours())}${zwei(jetzt.getMinutes())}.txt`;
+  const datei = new File([store.exportieren()], name, { type: 'text/plain' });
+  if (navigator.canShare?.({ files: [datei] })) {
+    try {
+      await navigator.share({ files: [datei], title: 'Gepäcklisten' });
+    } catch (fehler) {
+      if (fehler.name !== 'AbortError') toast('Teilen hat nicht geklappt.', { farbe: 'danger' });
+    }
+    return;
+  }
+  const url = URL.createObjectURL(datei);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `packliste-sicherung-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = name;
   document.body.append(a);
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
-  toast('Sicherung gespeichert (Ordner „Downloads“)');
+  toast('Teilen geht hier nicht – Datei liegt im Ordner „Downloads“');
 }
 
 // ---------- Klicks auf den Seiten ----------
@@ -653,7 +693,7 @@ function klick(e) {
   if (t.closest('[data-neu-aus-suche]')) return sacheBearbeiten(null, ansicht.suche.trim());
   if (t.closest('[data-neu-packen]')) return neuPacken();
   if (t.closest('[data-liste-leeren]')) return listeLeeren();
-  if (t.closest('[data-export]')) return sicherungSpeichern();
+  if (t.closest('[data-teilen]')) return teilen();
   if (t.closest('[data-import]')) return app.querySelector('#datei').click();
 }
 

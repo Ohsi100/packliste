@@ -233,3 +233,4 @@ body:not(.in-reise) ion-footer { display: none; }
 .wegweiser { background: var(--akzent-weich); border-color: transparent; }
 .wegweiser ion-button svg { margin: 0 0 0 6px; }
 .gepaeck-kopf h3 .avatar { margin-left: 2px; }
+.teilen-hilfe { margin: 12px 0 8px !important; }
