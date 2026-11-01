@@ -21,9 +21,9 @@ was sie für den Urlaub eingepackt haben und **in welches Gepäckstück** (Koffe
   - Neue Reise öffnet zuerst die Gepäck-Seite (Wegweiser "Schritt 1"), danach die Packliste.
   - Reise umbenennen oder löschen über den Stift.
 - **Packliste**: alle Sachen nach Kategorie, Filter Offen/Gepackt/Alle, Filter nach Person, Suche.
-  - Antippen → Bottom Sheet "Wohin gepackt?" (Gepäck der eigenen Person zuerst).
-  - Wischen nach rechts → Koffer der Person, nach links → Rucksack der Person (gemeinsame Sachen: gemeinsames bzw. erstes Gepäck).
-  - Erneutes Wischen auf das gleiche Gepäck packt wieder aus. Jede Änderung mit "Rückgängig" im Toast.
+  - Antippen → Bottom Sheet "Wohin gepackt?" mit allem Gepäck (feste Reihenfolge).
+  - Wischen nach rechts zeigt alle Koffer, nach links alle Rucksäcke; man tippt den richtigen an (bewusst kein automatisches Einpacken beim Durchwischen).
+  - Steckt die Sache schon in dem Gepäck, heißt der Knopf "Raus" und packt sie wieder aus. Jede Änderung mit "Rückgängig" im Toast.
 - **Personen**: Jede Sache gehört Christian, Lena oder ist "Gemeinsam". "Beide" beim Anlegen erzeugt zwei Einträge.
 - **Gepäck**: gehört einer Person oder beiden. Standard je Reise: Koffer C, Rucksack C, Koffer L, Rucksack L, Kosmetiktasche.
   Taschen können in einem Koffer stecken. Anlegen, umbenennen, Farbe, löschen.

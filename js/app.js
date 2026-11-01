@@ -275,24 +275,20 @@ function listeZeichnen() {
     if (!teil.length) return '';
     return `<h2 class="abschnitt">${icon(k.icon, 20)}${k.name}</h2>
       <ion-list class="gruppe" lines="full">${teil.map(sacheZeile).join('')}</ion-list>`;
-  }).join('') + `<p class="hinweis mittig wisch-tipp">${icon('info', 16)}Tippen: Gepäck wählen · Wischen → Koffer, ← Rucksack</p>`;
+  }).join('') + `<p class="hinweis mittig wisch-tipp">${icon('info', 16)}Tippen: alles Gepäck · Wischen → Koffer, ← Rucksäcke</p>`;
 }
 
-// Wohin gehört eine Sache beim Wischen? Zuerst das Gepäck derselben Person, sonst das erste passende.
-function wischZiel(s, artId) {
-  const passend = store.r().gepaeck.filter(g => g.art === artId);
-  return passend.find(g => g.person === s.person) ?? passend.find(g => !g.person) ?? passend[0] ?? null;
-}
-
-// Eine Zeile der Packliste. Nach rechts wischen: Koffer der Person. Nach links: Rucksack der Person.
+// Eine Zeile der Packliste. Nach rechts wischen zeigt alle Koffer, nach links alle Rucksäcke –
+// man tippt dann selbst auf den richtigen (kein automatisches Einpacken beim Durchwischen).
 function sacheZeile(s) {
   const g = s.ort && store.gepaeck(s.ort);
-  const rechts = wischZiel(s, 'koffer');
-  const links = wischZiel(s, 'rucksack');
-  const option = ziel => `<ion-item-option class="g${ziel.farbe}" data-wisch="${ziel.id}" expandable>
+  const { gepaeck } = store.r();
+  const rechts = gepaeck.filter(x => x.art === 'koffer');
+  const links = gepaeck.filter(x => x.art === 'rucksack');
+  const option = ziel => `<ion-item-option class="g${ziel.farbe}" data-wisch="${ziel.id}">
     <span class="option-inhalt">${icon(art(ziel).icon, 22)}<span>${s.ort === ziel.id ? 'Raus' : esc(ziel.name)}</span></span></ion-item-option>`;
   return `<ion-item-sliding data-sache="${s.id}">
-    ${rechts ? `<ion-item-options side="start">${option(rechts)}</ion-item-options>` : ''}
+    ${rechts.length ? `<ion-item-options side="start">${rechts.map(option).join('')}</ion-item-options>` : ''}
     <ion-item button detail="false" class="sache ${g ? 'gepackt' : ''}" data-packen="${s.id}">
       <span slot="start" class="haken ${g ? 'g' + g.farbe : ''}">${g ? icon('check', 18) : ''}</span>
       <ion-label>
@@ -301,16 +297,9 @@ function sacheZeile(s) {
       </ion-label>
       <ion-button slot="end" fill="clear" class="stift" data-bearbeiten="${s.id}" aria-label="${esc(s.name)} bearbeiten">${icon('pencil', 20)}</ion-button>
     </ion-item>
-    ${links && links !== rechts ? `<ion-item-options side="end">${option(links)}</ion-item-options>` : ''}
+    ${links.length ? `<ion-item-options side="end">${links.map(option).join('')}</ion-item-options>` : ''}
   </ion-item-sliding>`;
 }
-
-// Ganzes Durchwischen löst ionSwipe aus (nicht click)
-app.addEventListener('ionSwipe', e => {
-  const option = e.target.querySelector('ion-item-option[expandable]');
-  const zeile = e.target.closest('[data-sache]');
-  if (option && zeile) wischPacken(zeile.dataset.sache, option.dataset.wisch, zeile);
-});
 
 function wischPacken(sacheId, gepaeckId, zeile) {
   const s = store.sache(sacheId);
@@ -337,8 +326,6 @@ function einpacken(s, ort) {
 function packenSheet(id) {
   const s = store.sache(id);
   const { gepaeck } = store.r();
-  // Gepäck der eigenen Person zuerst
-  const sortiert = [...gepaeck].sort((a, b) => (b.person === s.person) - (a.person === s.person));
   const knopf = g => `<button class="ziel-knopf g${g.farbe} ${s.ort === g.id ? 'an' : ''}" data-ziel="${g.id}">
     <span class="ziel-icon">${icon(art(g).icon, 28)}</span>
     <span class="ziel-name">${esc(g.name)}</span>
@@ -350,7 +337,7 @@ function packenSheet(id) {
       <h2>${esc(s.name)}${s.anzahl > 1 ? ` <span class="anzahl zahlen">× ${s.anzahl}</span>` : ''}</h2>
       <p class="hinweis">${s.person ? `Für ${esc(store.person(s.person).name)} · ` : ''}Wohin hast du es gepackt?</p>
     </div>
-    ${gepaeck.length ? `<div class="ziel-raster">${sortiert.map(knopf).join('')}</div>` : '<p class="hinweis">Noch kein Gepäck angelegt – das geht unter „Gepäck“.</p>'}
+    ${gepaeck.length ? `<div class="ziel-raster">${gepaeck.map(knopf).join('')}</div>` : '<p class="hinweis">Noch kein Gepäck angelegt – das geht unter „Gepäck“.</p>'}
     <div class="sheet-knoepfe">
       ${s.ort ? `<ion-button expand="block" fill="outline" data-ziel="">${icon('rotate-ccw', 20)}Wieder auspacken</ion-button>` : ''}
       <ion-button expand="block" fill="clear" data-bearbeiten-sheet>${icon('pencil', 20)}Bearbeiten</ion-button>
