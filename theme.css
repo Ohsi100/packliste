@@ -1,0 +1,105 @@
+/* Theme "Bunt & fröhlich" (siehe Designvorgaben.md).
+   Alle Farben der App kommen von hier. Keine Hex-Werte an anderen Stellen verwenden. */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('lib/inter/inter-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  /* Design-Tokens */
+  --bg: #FFF7EC;              /* sonniges Creme */
+  --flaeche: #FFFFFF;
+  --flaeche-erhoeht: #FFEFD9;
+  --linie: #F2E1C8;
+  --text: #2A2238;
+  --text-gedaempft: #6A5F78;
+  --akzent: #D9366F;          /* Himbeere */
+  --akzent-weich: #FDE3EC;
+  --positiv: #1C8048;
+  --positiv-weich: #DDF5E6;
+  --negativ: #C9302C;
+  --negativ-weich: #FDE2E1;
+  --warnung: #A35F00;
+  --warnung-weich: #FFF0D6;
+  --auf-farbe: #FFFFFF;       /* Text auf farbigen Buttons */
+
+  /* Gepäckfarben: kräftig für Icons und Ränder, weich für Flächen. Text in der kräftigen Farbe hat > 4,5:1 auf Weiß. */
+  --g1: #0B7F8F; --g1-weich: #D7F3F5;   /* Türkis */
+  --g2: #B4520A; --g2-weich: #FFE6D2;   /* Orange */
+  --g3: #6D43CF; --g3-weich: #ECE4FF;   /* Violett */
+  --g4: #B8306F; --g4-weich: #FDE1EE;   /* Pink */
+  --g5: #2B7A38; --g5-weich: #DFF3E1;   /* Grün */
+  --g6: #2A62C4; --g6-weich: #DFEAFF;   /* Blau */
+
+  /* Personen (Kreis mit Anfangsbuchstaben, Bedeutung also nicht nur über Farbe) */
+  --person1: #2A62C4;
+  --person2: #C2410C;
+
+  /* Formen und Abstände: etwas runder und großzügiger als die anderen Themes */
+  --radius-karte: 20px;
+  --radius-knopf: 14px;
+  --dauer: 200ms;
+
+  /* Ionic an die Tokens anbinden */
+  --ion-font-family: 'Inter', system-ui, sans-serif;
+  --ion-background-color: var(--bg);
+  --ion-background-color-rgb: 255, 247, 236;
+  --ion-text-color: var(--text);
+  --ion-text-color-rgb: 42, 34, 56;
+  --ion-border-color: var(--linie);
+  --ion-item-background: var(--flaeche);
+  --ion-card-background: var(--flaeche);
+  --ion-toolbar-background: var(--bg);
+  --ion-toolbar-color: var(--text);
+  --ion-toolbar-border-color: var(--linie);
+  --ion-tab-bar-background: var(--flaeche);
+  --ion-tab-bar-border-color: var(--linie);
+  --ion-tab-bar-color: var(--text-gedaempft);
+  --ion-tab-bar-color-selected: var(--akzent);
+  --ion-overlay-background-color: var(--flaeche);
+  --ion-placeholder-color: var(--text-gedaempft);
+
+  --ion-color-primary: var(--akzent);
+  --ion-color-primary-rgb: 217, 54, 111;
+  --ion-color-primary-contrast: var(--auf-farbe);
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #bf3062;
+  --ion-color-primary-tint: #dd4a7d;
+
+  --ion-color-success: var(--positiv);
+  --ion-color-success-rgb: 28, 128, 72;
+  --ion-color-success-contrast: var(--auf-farbe);
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #19713f;
+  --ion-color-success-tint: #338d5a;
+
+  --ion-color-danger: var(--negativ);
+  --ion-color-danger-rgb: 201, 48, 44;
+  --ion-color-danger-contrast: var(--auf-farbe);
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #b12a27;
+  --ion-color-danger-tint: #ce4541;
+
+  --ion-color-medium: var(--flaeche-erhoeht);
+  --ion-color-medium-rgb: 255, 239, 217;
+  --ion-color-medium-contrast: var(--text);
+  --ion-color-medium-contrast-rgb: 42, 34, 56;
+  --ion-color-medium-shade: #e0d2bf;
+  --ion-color-medium-tint: #fff1dd;
+
+  /* Abstufungen, die Ionic für Ränder, Skeletons usw. nutzt */
+  --ion-background-color-step-50: #fbf0e2;
+  --ion-background-color-step-100: var(--flaeche-erhoeht);
+  --ion-background-color-step-150: #f7e5cc;
+  --ion-background-color-step-200: var(--linie);
+  --ion-text-color-step-400: var(--text-gedaempft);
+  --ion-text-color-step-500: var(--text-gedaempft);
+  --ion-text-color-step-600: var(--text-gedaempft);
+
+  color-scheme: light;
+}

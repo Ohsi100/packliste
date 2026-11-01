@@ -1,0 +1,9 @@
+# Lokale Einstellungen von Claude Code (enthalten Pfade vom PC) – nicht ins öffentliche Repo
+.claude/
+
+# Sicherungsdateien der Packliste nie hochladen
+packliste-sicherung-*.json
+
+# Windows
+Thumbs.db
+desktop.ini

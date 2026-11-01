@@ -1,0 +1,198 @@
+/* Layout und Bausteine der App. Farben nur über die Tokens aus theme.css. */
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--ion-font-family);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+}
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; cursor: pointer; }
+
+.inhalt { max-width: 640px; margin: 0 auto; padding: 16px 16px 96px; }
+.zahlen { font-variant-numeric: tabular-nums; }
+
+ion-title { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+ion-toolbar { --min-height: 56px; }
+ion-tab-button { --padding-top: 6px; --padding-bottom: 6px; font-size: 13px; font-weight: 600; }
+ion-tab-button svg { margin-bottom: 2px; }
+
+.inhalt h3, .sheet-inhalt h3 { font-size: 18px; font-weight: 700; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; }
+.hinweis { color: var(--text-gedaempft); font-size: 14px; }
+.klein-text { font-size: 14px; }
+.mittig { text-align: center; }
+.zeile { display: flex; align-items: center; gap: 12px; }
+.zeile > .wachsen, .wachsen { flex: 1; min-width: 0; }
+
+/* Karten */
+.karte {
+  background: var(--flaeche);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-karte);
+  padding: 16px;
+  margin: 0 0 16px;
+}
+.karte p { margin: 0 0 12px; }
+.karte h3 svg { color: var(--akzent); }
+.fortschritt-karte .gross { font-size: 28px; font-weight: 800; line-height: 1.1; }
+.fortschritt-karte .gross span { font-size: 18px; font-weight: 600; color: var(--text-gedaempft); }
+.fertig-karte { display: flex; gap: 16px; align-items: center; background: var(--positiv-weich); border-color: transparent; }
+.fertig-karte > svg { color: var(--positiv); flex: none; }
+.fertig-karte h3 { margin: 0; color: var(--positiv); }
+.fertig-karte p { margin: 0; }
+
+ion-progress-bar { height: 10px; border-radius: 5px; margin-top: 12px; --background: var(--flaeche-erhoeht); --progress-background: linear-gradient(90deg, var(--akzent), var(--g2)); }
+
+ion-chip { --background: var(--flaeche-erhoeht); --color: var(--text); font-size: 13px; height: 30px; margin: 0; font-weight: 600; }
+ion-chip.akzent { --background: var(--akzent-weich); --color: var(--akzent); }
+ion-chip svg { margin-right: 4px; }
+
+/* Buttons */
+ion-button { --border-radius: var(--radius-knopf); min-height: 48px; margin: 0; font-weight: 700; text-transform: none; letter-spacing: 0; font-size: 16px; --box-shadow: none; }
+ion-button svg { margin-right: 8px; }
+ion-button.stift, .gepaeck-kopf ion-button { min-height: 44px; --padding-start: 10px; --padding-end: 10px; --color: var(--text-gedaempft); }
+ion-button.stift svg, .gepaeck-kopf ion-button svg { margin: 0; }
+.knopf-reihe { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.karte ion-segment { margin-bottom: 12px; }
+ion-fab-button { --background: var(--akzent); --color: var(--auf-farbe); --border-radius: 20px; --box-shadow: 0 6px 16px rgba(217, 54, 111, 0.35); width: 60px; height: 60px; }
+ion-fab { bottom: 16px; right: 16px; }
+
+/* Filter */
+ion-segment { --background: var(--flaeche-erhoeht); border-radius: var(--radius-knopf); padding: 4px; margin-bottom: 12px; }
+ion-segment-button { --indicator-color: var(--flaeche); --color: var(--text-gedaempft); --color-checked: var(--text); --indicator-box-shadow: 0 1px 3px rgba(42, 34, 56, 0.12); --border-radius: 10px; min-height: 40px; text-transform: none; font-size: 15px; font-weight: 700; letter-spacing: 0; }
+ion-segment-button::part(indicator-background) { border-radius: 10px; }
+ion-searchbar { --background: var(--flaeche); --border-radius: var(--radius-knopf); --box-shadow: none; padding: 0 0 8px; border: 0; }
+ion-searchbar .searchbar-input-container { border: 1px solid var(--linie); border-radius: var(--radius-knopf); }
+
+.chip-reihe { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; }
+.chip-reihe.umbruch { flex-wrap: wrap; overflow: visible; }
+.wahl {
+  flex: none; display: inline-flex; align-items: center; gap: 6px;
+  min-height: 40px; padding: 0 14px; border-radius: 999px;
+  background: var(--flaeche); border: 1.5px solid var(--linie);
+  font-size: 15px; font-weight: 600; color: var(--text);
+  transition: background var(--dauer), border-color var(--dauer);
+}
+.wahl.an { background: var(--akzent-weich); border-color: var(--akzent); color: var(--akzent); }
+.wahl svg { flex: none; }
+
+/* Personen */
+.avatar {
+  flex: none; display: inline-grid; place-items: center;
+  width: 36px; height: 36px; border-radius: 50%; margin-right: 12px;
+  color: var(--auf-farbe); font-weight: 800; font-size: 16px;
+}
+.avatar.klein { width: 22px; height: 22px; font-size: 12px; margin-right: 0; }
+.avatar.mini { width: 18px; height: 18px; font-size: 10px; margin-right: 0; }
+.avatar.p1 { background: var(--person1); }
+.avatar.p2 { background: var(--person2); }
+
+/* Packliste */
+h2.abschnitt { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 750; margin: 20px 4px 8px; }
+h2.abschnitt svg { color: var(--akzent); }
+ion-list.gruppe {
+  background: transparent; padding: 0; margin: 0 0 8px;
+  border-radius: var(--radius-karte); border: 1px solid var(--linie); overflow: hidden;
+}
+ion-list.gruppe ion-item { --min-height: 64px; --padding-start: 12px; --inner-padding-end: 4px; }
+ion-list.gruppe ion-item-sliding:last-child ion-item, ion-list.gruppe > ion-item:last-child { --border-width: 0; --inner-border-width: 0; }
+ion-item ion-label h3 { font-size: 16px !important; font-weight: 650; margin: 0 0 2px !important; }
+.sache.gepackt ion-label h3 { color: var(--text-gedaempft); }
+.anzahl { color: var(--text-gedaempft); font-weight: 600; }
+.unterzeile { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 13px !important; color: var(--text-gedaempft) !important; }
+.gemeinsam { font-style: italic; }
+
+.haken {
+  flex: none; width: 30px; height: 30px; margin-right: 12px; border-radius: 50%;
+  border: 2px solid var(--linie); display: grid; place-items: center; color: var(--auf-farbe);
+  transition: background var(--dauer), transform var(--dauer);
+}
+.gepackt .haken { border-color: transparent; animation: plopp 250ms ease-out; }
+@keyframes plopp { 50% { transform: scale(1.15); } }
+@media (prefers-reduced-motion: reduce) { .gepackt .haken { animation: none; } }
+
+.ort-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700;
+}
+
+/* Wisch-Optionen */
+ion-item-option { min-width: 96px; font-weight: 700; font-size: 14px; text-transform: none; }
+.option-inhalt { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.wisch-tipp { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 16px; }
+
+/* Gepäckfarben: g1 … g6 */
+.g1 { --g: var(--g1); --gw: var(--g1-weich); }
+.g2 { --g: var(--g2); --gw: var(--g2-weich); }
+.g3 { --g: var(--g3); --gw: var(--g3-weich); }
+.g4 { --g: var(--g4); --gw: var(--g4-weich); }
+.g5 { --g: var(--g5); --gw: var(--g5-weich); }
+.g6 { --g: var(--g6); --gw: var(--g6-weich); }
+.haken { background: var(--g, transparent); }
+.ort-chip { background: var(--gw); color: var(--g); }
+ion-item-option { --background: var(--g, var(--akzent)); --color: var(--auf-farbe); }
+
+/* Gepäck-Seite */
+.gepaeck-karte {
+  background: var(--flaeche); border: 2px solid var(--gw); border-radius: var(--radius-karte);
+  padding: 12px 12px 4px; margin: 0 0 16px;
+}
+.gepaeck-karte.innen { background: var(--gw); border: 0; margin: 4px 0 8px; padding: 8px 10px 2px; }
+.gepaeck-kopf { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.gepaeck-kopf h3 { margin: 0 !important; }
+.gepaeck-kopf p { margin: 0; font-size: 14px; color: var(--text-gedaempft); }
+.gepaeck-icon { flex: none; width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--gw); color: var(--g); }
+.innen .gepaeck-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--flaeche); }
+.sache-chip {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px;
+  border-radius: 999px; border: 0; background: var(--gw); color: var(--text); font-size: 14px; font-weight: 600;
+}
+.innen .sache-chip { background: var(--flaeche); }
+.leer-klein { margin: 0 0 8px 4px; }
+
+/* Bottom Sheets */
+ion-modal.sheet { --height: auto; --border-radius: 24px; --background: var(--flaeche); }
+.sheet-inhalt { padding: 20px 16px calc(16px + env(safe-area-inset-bottom)); max-height: 88vh; overflow-y: auto; }
+.sheet-kopf { margin-bottom: 16px; }
+.sheet-kopf h2 { font-size: 22px; font-weight: 800; margin: 0; }
+.sheet-kopf p { margin: 2px 0 0; }
+.sheet-knoepfe { display: grid; gap: 8px; margin-top: 16px; }
+.feld-titel { font-size: 14px; font-weight: 700; color: var(--text-gedaempft); margin: 16px 0 8px; }
+ion-input { --border-radius: var(--radius-knopf); --highlight-color-focused: var(--akzent); font-size: 17px; }
+
+.ziel-raster { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ziel-knopf {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+  min-height: 96px; padding: 14px; text-align: left;
+  border-radius: var(--radius-karte); border: 2px solid transparent; background: var(--gw);
+  transition: transform 150ms;
+}
+.ziel-knopf:active { transform: scale(0.97); }
+.ziel-knopf.an { border-color: var(--g); }
+.ziel-icon { color: var(--g); }
+.ziel-name { font-weight: 750; font-size: 16px; }
+.ziel-unter { font-size: 13px; color: var(--text-gedaempft); }
+.ziel-haken { position: absolute; top: 10px; right: 10px; width: 26px; height: 26px; border-radius: 50%; background: var(--g); color: var(--auf-farbe); display: grid; place-items: center; }
+
+.stepper { display: flex; align-items: center; gap: 16px; }
+.stepper ion-button { width: 48px; --padding-start: 0; --padding-end: 0; }
+.stepper ion-button svg { margin: 0; }
+.stepper span { min-width: 32px; text-align: center; font-size: 22px; font-weight: 800; }
+
+.farben { display: flex; gap: 12px; flex-wrap: wrap; }
+.farbe { width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--flaeche); outline: 2px solid transparent; background: var(--g); color: transparent; display: grid; place-items: center; }
+.farbe.an { outline-color: var(--g); color: var(--auf-farbe); }
+
+/* Leere Zustände */
+.leer { text-align: center; padding: 40px 16px; color: var(--text-gedaempft); }
+.leer > svg { color: var(--akzent); }
+.leer h3 { justify-content: center; color: var(--text); margin-top: 12px; }
+.leer p { margin: 0 0 16px; }
+
+/* Dialoge */
+.alert-gefahr { color: var(--negativ) !important; }
+ion-toast { --border-radius: 14px; --background: var(--text); --color: var(--flaeche); --button-color: var(--akzent-weich); font-weight: 600; }
+ion-searchbar.md { --box-shadow: none; }
+ion-toast::part(button) { text-transform: none; font-weight: 700; letter-spacing: 0; }
