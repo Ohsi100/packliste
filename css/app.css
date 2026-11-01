@@ -196,3 +196,40 @@ ion-input { --border-radius: var(--radius-knopf); --highlight-color-focused: var
 ion-toast { --border-radius: 14px; --background: var(--text); --color: var(--flaeche); --button-color: var(--akzent-weich); font-weight: 600; }
 ion-searchbar.md { --box-shadow: none; }
 ion-toast::part(button) { text-transform: none; font-weight: 700; letter-spacing: 0; }
+
+/* Startbildschirm: Reisen */
+body:not(.in-reise) ion-footer { display: none; }
+.zurueck-knopf { --padding-start: 4px; --padding-end: 4px; min-height: 44px; }
+.zurueck-knopf svg { margin: 0; }
+.willkommen { text-align: center; padding: 32px 8px; }
+.willkommen img { border-radius: 24px; }
+.willkommen h2 { font-size: 26px; font-weight: 800; margin: 20px 0 8px; }
+.willkommen p { color: var(--text-gedaempft); margin: 0 0 24px; }
+.reise-karte {
+  background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--radius-karte);
+  padding: 14px 8px 14px 14px; margin: 0 0 12px; cursor: pointer; transition: transform 150ms;
+}
+.reise-karte:active { transform: scale(0.99); }
+.reise-karte.zuletzt { border: 2px solid var(--akzent-weich); }
+.reise-karte h3 { margin: 0 !important; font-size: 18px; }
+.reise-karte p { margin: 2px 0 0; }
+.reise-karte ion-progress-bar { margin: 12px 6px 0 0; }
+.reise-icon { flex: none; width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--akzent-weich); color: var(--akzent); }
+
+/* Neue Reise: Auswahl, womit man startet */
+.quellen { display: grid; gap: 8px; }
+.quelle {
+  display: flex; align-items: center; gap: 12px; text-align: left; width: 100%;
+  min-height: 60px; padding: 10px 12px; border-radius: var(--radius-knopf);
+  background: var(--flaeche); border: 1.5px solid var(--linie);
+}
+.quelle b { display: block; font-size: 15px; }
+.quelle .wachsen span { display: block; font-size: 13px; color: var(--text-gedaempft); }
+.quelle-icon { flex: none; color: var(--akzent); display: flex; }
+.quelle-haken { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: transparent; border: 2px solid var(--linie); }
+.quelle.an { border-color: var(--akzent); background: var(--akzent-weich); }
+.quelle.an .quelle-haken { background: var(--akzent); border-color: var(--akzent); color: var(--auf-farbe); }
+
+.wegweiser { background: var(--akzent-weich); border-color: transparent; }
+.wegweiser ion-button svg { margin: 0 0 0 6px; }
+.gepaeck-kopf h3 .avatar { margin-left: 2px; }

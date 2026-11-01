@@ -1,4 +1,4 @@
-// Packliste: liegt nur im Browser des Handys (localStorage).
+// Reisen und Packlisten: liegen nur im Browser des Handys (localStorage).
 // Falls der Speicher gesperrt ist, läuft die App trotzdem (dann nur bis zum Schließen).
 
 const SCHLUESSEL = 'packliste-v1';
@@ -20,9 +20,9 @@ export const ARTEN = [
   { id: 'tasche', name: 'Tasche', icon: 'shopping-bag' }
 ];
 
-// Startliste beim allerersten Öffnen. Alles lässt sich in der App ändern oder löschen.
+// Beispiel-Liste für eine neue Reise. Alles lässt sich in der App ändern oder löschen.
 // "beide": je ein Eintrag für jede Person (wird getrennt gepackt), sonst ein gemeinsamer Eintrag.
-const START_SACHEN = {
+const BEISPIEL_SACHEN = {
   kleidung: { beide: ['Unterhosen', 'Socken', 'T-Shirts', 'Hosen', 'Shorts', 'Pullover', 'Schlafanzug', 'Schuhe', 'Badelatschen'] },
   bad: { beide: ['Zahnbürste', 'Deo', 'Haarbürste'], gemeinsam: ['Zahnpasta', 'Duschgel', 'Shampoo'] },
   strand: { beide: ['Badesachen', 'Sonnenbrille', 'Sonnenhut', 'Strandtuch'], gemeinsam: ['Sonnencreme'] },
@@ -33,41 +33,65 @@ const START_SACHEN = {
 };
 
 export const neueId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const kopie = x => JSON.parse(JSON.stringify(x));
+const kuerzel = p => p.name.charAt(0).toUpperCase();
 
-function startDaten() {
-  const personen = [
+function startPersonen() {
+  return [
     { id: 'p1', name: 'Christian' },
     { id: 'p2', name: 'Lena' }
   ];
+}
+
+// Je Person ein Koffer und ein Rucksack, dazu eine gemeinsame Kosmetiktasche
+function standardGepaeck(personen) {
+  const farben = [[1, 6], [2, 3], [5, 6]];
+  const gepaeck = [];
+  personen.forEach((p, i) => {
+    const [fk, fr] = farben[i % farben.length];
+    gepaeck.push({ id: neueId(), name: `Koffer ${kuerzel(p)}`, art: 'koffer', farbe: fk, person: p.id, in: null });
+    gepaeck.push({ id: neueId(), name: `Rucksack ${kuerzel(p)}`, art: 'rucksack', farbe: fr, person: p.id, in: null });
+  });
+  gepaeck.push({ id: neueId(), name: 'Kosmetiktasche', art: 'tasche', farbe: 4, person: null, in: null });
+  return gepaeck;
+}
+
+function beispielSachen(personen) {
   const sachen = [];
-  for (const [kategorie, teile] of Object.entries(START_SACHEN)) {
+  for (const [kategorie, teile] of Object.entries(BEISPIEL_SACHEN)) {
     for (const name of teile.beide ?? []) {
       for (const p of personen) sachen.push({ id: neueId(), name, anzahl: 1, kategorie, person: p.id, ort: null });
     }
     for (const name of teile.gemeinsam ?? []) sachen.push({ id: neueId(), name, anzahl: 1, kategorie, person: null, ort: null });
   }
-  return {
-    format: 1,
-    etappe: 'hin',   // 'hin' oder 'rueck'
-    personen,        // person: null bei einer Sache heißt "gemeinsam"
-    gepaeck: [
-      { id: 'koffer1', name: 'Koffer 1', art: 'koffer', farbe: 1, in: null },
-      { id: 'koffer2', name: 'Koffer 2', art: 'koffer', farbe: 2, in: null },
-      { id: 'rucksack', name: 'Rucksack', art: 'rucksack', farbe: 3, in: null },
-      { id: 'kosmetik', name: 'Kosmetiktasche', art: 'tasche', farbe: 4, in: null }
-    ],
-    sachen
-  };
+  return sachen;
 }
 
-let daten = startDaten();
+const leer = () => ({ format: 2, personen: startPersonen(), reisen: [], aktiv: null });
+
+// Daten aus Version 0.1 (eine einzige Liste) werden zur ersten Reise "Urlaub"
+function umziehen(alt) {
+  if (alt.format === 2) return Object.assign(leer(), alt);
+  const daten = leer();
+  if (Array.isArray(alt.personen)) daten.personen = alt.personen;
+  if (Array.isArray(alt.sachen)) {
+    const reise = {
+      id: neueId(), name: 'Urlaub', erstellt: Date.now(), etappe: alt.etappe ?? 'hin',
+      gepaeck: (alt.gepaeck ?? []).map(g => ({ person: null, ...g })),
+      sachen: alt.sachen
+    };
+    daten.reisen.push(reise);
+  }
+  return daten;
+}
+
+let daten = leer();
 let speicherOk = true;
 
 export function laden() {
   try {
     const roh = localStorage.getItem(SCHLUESSEL);
-    if (roh) daten = Object.assign(startDaten(), JSON.parse(roh));
-    else speichern();
+    if (roh) daten = umziehen(JSON.parse(roh));
   } catch {
     speicherOk = false;
   }
@@ -86,22 +110,69 @@ export function speichern() {
 export const istSpeicherOk = () => speicherOk;
 export const d = () => daten;
 
-export const gepaeck = id => daten.gepaeck.find(g => g.id === id);
-export const sache = id => daten.sachen.find(s => s.id === id);
+// Die gerade geöffnete Reise (oder null auf dem Startbildschirm)
+export const r = () => daten.reisen.find(x => x.id === daten.aktiv) ?? null;
+
+export const gepaeck = id => r()?.gepaeck.find(g => g.id === id);
+export const sache = id => r()?.sachen.find(s => s.id === id);
 export const person = id => daten.personen.find(p => p.id === id);
+
+export function reiseOeffnen(id) {
+  daten.aktiv = id;
+  speichern();
+}
+
+// quelle: 'leer', 'beispiel' oder die ID einer bestehenden Reise (wird kopiert, alles wieder ungepackt)
+export function neueReise(name, quelle) {
+  const vorlage = daten.reisen.find(x => x.id === quelle);
+  const reise = { id: neueId(), name, erstellt: Date.now(), etappe: 'hin', gepaeck: [], sachen: [] };
+  if (vorlage) {
+    reise.gepaeck = kopie(vorlage.gepaeck).map(g => ({ ...g, in: null }));
+    reise.sachen = kopie(vorlage.sachen).map(s => ({ ...s, id: neueId(), ort: null }));
+  } else {
+    reise.gepaeck = standardGepaeck(daten.personen);
+    if (quelle === 'beispiel') reise.sachen = beispielSachen(daten.personen);
+  }
+  daten.reisen.unshift(reise);
+  daten.aktiv = reise.id;
+  speichern();
+  return reise;
+}
+
+export function reiseLoeschen(id) {
+  daten.reisen = daten.reisen.filter(x => x.id !== id);
+  if (daten.aktiv === id) daten.aktiv = null;
+  speichern();
+}
 
 // Alles wieder auf "noch nicht gepackt" – z. B. für den Rückweg.
 export function neuPacken(etappe) {
-  daten.sachen.forEach(s => { s.ort = null; });
-  daten.gepaeck.forEach(g => { if (g.art === 'tasche') g.in = null; });
-  daten.etappe = etappe;
+  const reise = r();
+  reise.sachen.forEach(s => { s.ort = null; });
+  reise.gepaeck.forEach(g => { if (g.art === 'tasche') g.in = null; });
+  reise.etappe = etappe;
   speichern();
 }
 
 export function gepaeckLoeschen(id) {
-  daten.sachen.forEach(s => { if (s.ort === id) s.ort = null; });
-  daten.gepaeck.forEach(g => { if (g.in === id) g.in = null; });
-  daten.gepaeck = daten.gepaeck.filter(g => g.id !== id);
+  const reise = r();
+  reise.sachen.forEach(s => { if (s.ort === id) s.ort = null; });
+  reise.gepaeck.forEach(g => { if (g.in === id) g.in = null; });
+  reise.gepaeck = reise.gepaeck.filter(g => g.id !== id);
+  speichern();
+}
+
+// Person umbenennen; Gepäcknamen mit dem alten Kürzel ("Koffer C") wandern mit
+export function personUmbenennen(id, name) {
+  const p = person(id);
+  const alt = kuerzel(p);
+  p.name = name;
+  const neu = kuerzel(p);
+  for (const reise of daten.reisen) {
+    for (const g of reise.gepaeck) {
+      if (g.person === id && g.name.endsWith(' ' + alt)) g.name = g.name.slice(0, -alt.length) + neu;
+    }
+  }
   speichern();
 }
 
@@ -111,14 +182,10 @@ export function exportieren() {
 
 export function importieren(text) {
   const obj = JSON.parse(text);
-  if (obj?.app !== 'packliste' || !Array.isArray(obj.daten?.sachen)) {
+  if (obj?.app !== 'packliste' || !(Array.isArray(obj.daten?.reisen) || Array.isArray(obj.daten?.sachen))) {
     throw new Error('Das ist keine Sicherungsdatei der Packliste.');
   }
-  daten = Object.assign(startDaten(), obj.daten);
-  speichern();
-}
-
-export function startlisteLaden() {
-  daten = startDaten();
+  daten = umziehen(obj.daten);
+  daten.aktiv = null;
   speichern();
 }

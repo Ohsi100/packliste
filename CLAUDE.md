@@ -15,14 +15,24 @@ was sie für den Urlaub eingepackt haben und **in welches Gepäckstück** (Koffe
 - Halte dich an `Designvorgaben.md` (Kopie im Projektordner), Theme **"Bunt & fröhlich"**.
 - Farben nur als CSS-Variablen in `theme.css`, überall sonst nur die Variablen benutzen.
 
-## Funktionen (Version 0.1)
+## Funktionen (Version 0.2)
+- **Startbildschirm "Unsere Reisen"**: Die App startet immer hier. Jede Reise hat eigene Packliste und eigenes Gepäck.
+  - "Neue Reise": Name + Start mit leerer Liste, Beispiel-Liste oder Kopie einer bisherigen Reise (alles wieder ungepackt).
+  - Neue Reise öffnet zuerst die Gepäck-Seite (Wegweiser "Schritt 1"), danach die Packliste.
+  - Reise umbenennen oder löschen über den Stift.
 - **Packliste**: alle Sachen nach Kategorie, Filter Offen/Gepackt/Alle, Filter nach Person, Suche.
-  - Antippen → Bottom Sheet "Wohin gepackt?" mit allen Gepäckstücken.
-  - Wischen nach rechts → erstes Gepäckstück (Koffer 1), nach links → zweites (Koffer 2); halb nach links zeigt zusätzlich das dritte (Rucksack).
+  - Antippen → Bottom Sheet "Wohin gepackt?" (Gepäck der eigenen Person zuerst).
+  - Wischen nach rechts → Koffer der Person, nach links → Rucksack der Person (gemeinsame Sachen: gemeinsames bzw. erstes Gepäck).
   - Erneutes Wischen auf das gleiche Gepäck packt wieder aus. Jede Änderung mit "Rückgängig" im Toast.
 - **Personen**: Jede Sache gehört Christian, Lena oder ist "Gemeinsam". "Beide" beim Anlegen erzeugt zwei Einträge.
-- **Gepäck**: Karten je Gepäckstück mit Inhalt; Taschen (z. B. Kosmetiktasche) können in einem Koffer stecken. Anlegen, umbenennen, Farbe, löschen.
-- **Mehr**: "Neu packen" (alles wieder ungepackt, Etappe Hinweg ↔ Rückweg), Namen der Personen ändern, Sicherung speichern/laden, Startliste wiederherstellen.
+- **Gepäck**: gehört einer Person oder beiden. Standard je Reise: Koffer C, Rucksack C, Koffer L, Rucksack L, Kosmetiktasche.
+  Taschen können in einem Koffer stecken. Anlegen, umbenennen, Farbe, löschen.
+- **Mehr**: "Neu packen" (Etappe Hinweg ↔ Rückweg), Namen der Personen ändern (gilt für alle Reisen),
+  "Liste leeren" (nur Sachen der aktuellen Reise; Kategorien und Gepäck bleiben), Sicherung aller Reisen speichern/laden.
+
+## Daten
+- localStorage-Schlüssel `packliste-v1`, `format: 2` = `{ personen, reisen: [{ id, name, etappe, gepaeck, sachen }], aktiv }`.
+- Daten im alten `format: 1` (eine Liste) werden beim Laden automatisch zur Reise "Urlaub".
 
 ## Technik-Notizen
 - Versionsnummer nur in `version.js`; bei jeder Änderung hochzählen, sonst bekommt das Handy kein Update.
