@@ -24,6 +24,7 @@ was sie für den Urlaub eingepackt haben und **in welches Gepäckstück** (Koffe
   - Antippen → Bottom Sheet "Wohin gepackt?" mit allem Gepäck (feste Reihenfolge).
   - Wischen nach rechts zeigt alle Koffer, nach links alle Rucksäcke; man tippt den richtigen an (bewusst kein automatisches Einpacken beim Durchwischen).
   - Steckt die Sache schon in dem Gepäck, heißt der Knopf "Raus" und packt sie wieder aus. Jede Änderung mit "Rückgängig" im Toast.
+  - Gibt es eine Sache mit gleichem Namen (Groß/klein egal) für dieselbe Person schon in der Reise, fragt die App „Gibt es schon … Trotzdem eintragen?“ (beim Anlegen und Umbenennen).
 - **Personen**: Jede Sache gehört Christian, Lena oder ist "Gemeinsam". "Beide" beim Anlegen erzeugt zwei Einträge.
 - **Gepäck**: gehört einer Person oder beiden. Standard je Reise: Koffer C, Rucksack C, Koffer L, Rucksack L, Kosmetiktasche.
   Taschen können in einem Koffer stecken. Anlegen, umbenennen, Farbe, löschen.

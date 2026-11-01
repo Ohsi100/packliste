@@ -23,13 +23,13 @@ export function toast(nachricht, { dauer = 2500, farbe, knopf } = {}) {
 }
 
 // Bestätigung nur bei Löschen bzw. Zurücksetzen (siehe Designvorgaben).
-export async function bestaetigen(titel, text, knopfText) {
+export async function bestaetigen(titel, text, knopfText, gefahr = true) {
   const a = document.createElement('ion-alert');
   a.header = titel;
   a.message = text;
   a.buttons = [
     { text: 'Abbrechen', role: 'cancel' },
-    { text: knopfText, role: 'destructive', cssClass: 'alert-gefahr' }
+    { text: knopfText, role: 'destructive', cssClass: gefahr ? 'alert-gefahr' : '' }
   ];
   const { role } = await zeige(a);
   return role === 'destructive';

@@ -388,9 +388,10 @@ function sacheBearbeiten(id, vorschlagName = '') {
   if (!s) setTimeout(() => nameEl.setFocus?.(), 350);
   nameEl.addEventListener('keydown', e => { if (e.key === 'Enter') speichern(); });
 
-  function speichern() {
+  async function speichern() {
     const name = String(nameEl.value ?? '').trim();
     if (!name) return nameFehlt(nameEl);
+    if (!await doppeltOk(name)) return;
     const basis = { name, anzahl: wahl.anzahl, kategorie: wahl.kategorie, ort: wahl.ort || null };
     if (s) {
       Object.assign(s, basis, { person: wahl.person === 'gemeinsam' ? null : wahl.person });
@@ -403,6 +404,16 @@ function sacheBearbeiten(id, vorschlagName = '') {
     toast(s ? 'Gespeichert' : wahl.person === 'beide' ? `${name} für beide hinzugefügt` : `${name} hinzugefügt`);
     ansicht.suche = '';
     zeichnen();
+  }
+
+  // Gibt es die Sache für dieselbe Person schon in dieser Reise? Dann nachfragen.
+  async function doppeltOk(name) {
+    const fuer = wahl.person === 'beide' ? personen.map(p => p.id) : [wahl.person === 'gemeinsam' ? null : wahl.person];
+    const gleich = x => x !== s && x.name.trim().toLocaleLowerCase('de') === name.toLocaleLowerCase('de') && fuer.includes(x.person ?? null);
+    const doppelt = reise.sachen.filter(gleich);
+    if (!doppelt.length) return true;
+    const wer = [...new Set(doppelt.map(x => x.person ? store.person(x.person)?.name : 'gemeinsam'))].join(' und ');
+    return bestaetigen('Gibt es schon', `„${esc(doppelt[0].name)}“ steht schon auf der Liste (${esc(wer)}). Trotzdem noch einmal eintragen?`, 'Trotzdem eintragen', false);
   }
 
   m.addEventListener('click', async e => {
